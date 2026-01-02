@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using ServerManagerBot.BackgroundServices.HostedServices;
-using ServerManagerBot.Domain.Interfaces;
 using ServerManagerBot.Domain.Interfaces.TelegramClient;
 using ServerManagerBot.Host.Config;
+using ServerManagerBot.Host.Extensions;
 using ServerManagerBot.Infrastructure.Integration.Telegram;
 using Telegram.Bot;
 
@@ -55,6 +55,7 @@ public static class Program
 
     private static void AddServices(this IServiceCollection services)
     {
+        services.AddMediator();
         services.AddSingleton<ITelegramService, TelegramService>();
     }
 

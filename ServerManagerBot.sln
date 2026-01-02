@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerManagerBot.Background
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerManagerBot.Domain", "ServerManagerBot.Domain\ServerManagerBot.Domain.csproj", "{8FA89793-EDE9-4B11-9758-ED3F7A42D9C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerManagerBot.Infrastructure.Mediator", "ServerManagerBot.Infrastructure.Mediator\ServerManagerBot.Infrastructure.Mediator.csproj", "{ABFF855F-6A09-4280-BAAA-E30083243E17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,11 +58,16 @@ Global
 		{8FA89793-EDE9-4B11-9758-ED3F7A42D9C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FA89793-EDE9-4B11-9758-ED3F7A42D9C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FA89793-EDE9-4B11-9758-ED3F7A42D9C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABFF855F-6A09-4280-BAAA-E30083243E17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABFF855F-6A09-4280-BAAA-E30083243E17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABFF855F-6A09-4280-BAAA-E30083243E17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABFF855F-6A09-4280-BAAA-E30083243E17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0AD63BC3-5C9E-4880-9B2A-E09025D90C04} = {C38F4562-A31B-40C3-8CB9-D8075B8A665B}
 		{AE4FA2D1-F364-406C-B66B-4F7C8DD47687} = {C38F4562-A31B-40C3-8CB9-D8075B8A665B}
 		{60A1D8F8-1EC2-41CF-AC27-0D784A88EB68} = {C38F4562-A31B-40C3-8CB9-D8075B8A665B}
 		{D5554D43-944F-44DC-954B-CD13A9DFF0AF} = {C38F4562-A31B-40C3-8CB9-D8075B8A665B}
+		{ABFF855F-6A09-4280-BAAA-E30083243E17} = {C38F4562-A31B-40C3-8CB9-D8075B8A665B}
 	EndGlobalSection
 EndGlobal

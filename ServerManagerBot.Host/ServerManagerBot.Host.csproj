@@ -17,6 +17,7 @@
     <ItemGroup>
       <ProjectReference Include="..\ServerManagerBot.BackgroundServices\ServerManagerBot.BackgroundServices.csproj" />
       <ProjectReference Include="..\ServerManagerBot.Infrastructure.Integration\ServerManagerBot.Infrastructure.Integration.csproj" />
+      <ProjectReference Include="..\ServerManagerBot.Infrastructure.Mediator\ServerManagerBot.Infrastructure.Mediator.csproj" />
     </ItemGroup>
 
 </Project>
