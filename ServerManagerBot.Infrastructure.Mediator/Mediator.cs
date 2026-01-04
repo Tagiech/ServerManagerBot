@@ -7,7 +7,7 @@ public class Mediator : IMediator
 {
     private readonly IServiceProvider _serviceProvider;
 
-    internal Mediator(IServiceProvider serviceProvider)
+    public Mediator(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }

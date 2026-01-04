@@ -11,6 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ServerManagerBot.Application\ServerManagerBot.Application.csproj" />
       <ProjectReference Include="..\ServerManagerBot.Domain\ServerManagerBot.Domain.csproj" />
     </ItemGroup>
 

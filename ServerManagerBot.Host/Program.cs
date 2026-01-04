@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using ServerManagerBot.Application.Commands.UserCommands.Registry;
+using ServerManagerBot.Application.Commands.UserCommands.Requests;
 using ServerManagerBot.BackgroundServices.HostedServices;
 using ServerManagerBot.Domain.Interfaces.TelegramClient;
 using ServerManagerBot.Host.Config;
@@ -56,6 +58,18 @@ public static class Program
     private static void AddServices(this IServiceCollection services)
     {
         services.AddMediator();
+
+        services.AddRequestHandler<PingHandler>();
+        services.AddRequestHandler<EchoRequestHandler>();
+        services.AddRequestHandler<HelpRequestHandler>();
+
+        services.AddSingleton<UserGateRegistry>();
+        var commandDescriptors = UserCommandDiscoverer
+            .Discover(typeof(UserCommandDiscoverer).Assembly);
+        services.AddSingleton<IUserCommandRegistry>(new UserCommandRegistry(commandDescriptors));
+        services.AddSingleton<UserCommandDispatcher>();
+        services.AddSingleton<UserResponsePresenter>();
+        
         services.AddSingleton<ITelegramService, TelegramService>();
     }
 

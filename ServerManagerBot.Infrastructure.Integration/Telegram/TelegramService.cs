@@ -1,3 +1,5 @@
+using ServerManagerBot.Application.Commands;
+using ServerManagerBot.Application.Commands.UserCommands.Registry;
 using ServerManagerBot.Domain.Interfaces.TelegramClient;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
@@ -9,10 +11,19 @@ namespace ServerManagerBot.Infrastructure.Integration.Telegram;
 public class TelegramService : ITelegramService
 {
     private readonly ITelegramBotClient _telegramBotClient;
+    private readonly IUserCommandRegistry _userCommandRegistry;
+    private readonly UserCommandDispatcher _userCommandDispatcher;
+    private readonly UserResponsePresenter _userResponsePresenter;
 
-    public TelegramService(ITelegramBotClient telegramBotClient)
+    public TelegramService(ITelegramBotClient telegramBotClient,
+        IUserCommandRegistry userCommandRegistry,
+        UserCommandDispatcher userCommandDispatcher,
+        UserResponsePresenter userResponsePresenter)
     {
         _telegramBotClient = telegramBotClient;
+        _userCommandRegistry = userCommandRegistry;
+        _userCommandDispatcher = userCommandDispatcher;
+        _userResponsePresenter = userResponsePresenter;
     }
     public Task StartAsync(CancellationToken ct)
     {
@@ -28,17 +39,50 @@ public class TelegramService : ITelegramService
     private async Task HandleUpdate(ITelegramBotClient botClient, Update update, CancellationToken ct)
     {
         var message = update.Message;
-        if (message is null)
+        if (message is null || string.IsNullOrWhiteSpace(message.Text))
+        {
+            return;
+        }
+        
+        var (cmd, query) = Parse(message.Text);
+        var descriptor = _userCommandRegistry.Resolve(cmd);
+        if (descriptor is null)
         {
             return;
         }
 
-        if (message.Text == "ping")
-        {
-            await botClient.SendMessage(message.Chat.Id, "pong", cancellationToken: ct);
-        }
+        var userId = message.Chat.Id;
+        var commandContext = new CommandContext(userId, query);
+        var response = await _userCommandDispatcher.DispatchExclusive(descriptor, commandContext, ct);
+        await _userResponsePresenter.Present(response, userId, ct);
     }
-    
+
+    private static (string cmd, string parameters) Parse(string? messageText)
+    {
+        if (string.IsNullOrWhiteSpace(messageText))
+        {
+            return (string.Empty, string.Empty);
+        }
+
+        var text = messageText.Trim();
+        
+        if (text.Length > 0 && text[0] == '/')
+        {
+            text = text[1..].TrimStart();
+        }
+
+        var firstSpaceIndex = text.IndexOfAny([' ', '\t', '\n', '\r']);
+        if (firstSpaceIndex < 0)
+        {
+            return (text, string.Empty);
+        }
+
+        var cmd = text[..firstSpaceIndex];
+        var parameters = text[(firstSpaceIndex + 1)..].Trim();
+
+        return (cmd, parameters);
+    }
+
     private Task HandlePollingError(ITelegramBotClient botClient, Exception exception, CancellationToken ct)
     {
         return Task.CompletedTask;
