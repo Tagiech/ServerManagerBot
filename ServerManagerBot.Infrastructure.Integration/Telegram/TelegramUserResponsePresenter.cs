@@ -31,7 +31,10 @@ public sealed class TelegramUserResponsePresenter
             }
         }
 
-        await SendText(response.SourceId, response.Text!, response.Markdown, response.Buttons, ct);
+        if (response.Text is not null)
+        {
+            await SendText(response.SourceId, response.Text!, response.Markdown, response.Buttons, ct);
+        }
     }
 
     private async Task SendText(string chatId,

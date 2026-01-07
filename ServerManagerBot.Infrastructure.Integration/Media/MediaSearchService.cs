@@ -13,7 +13,7 @@ public class MediaSearchService : IMediaSearchService
 
     public async Task<MediaSearchResult[]> SearchAsync(string query, CancellationToken ct)
     {
-        var mediaData = await _mediaCatalogClient.SearchMedia(query);
+        var mediaData = await _mediaCatalogClient.SearchMedia(query, ct);
         if (mediaData is null || mediaData.Length == 0)
         {
             return [];
@@ -23,6 +23,11 @@ public class MediaSearchService : IMediaSearchService
         foreach (var item in mediaData.Where(r => r.Type != "3d"))
         {
             var thumbnail = _mediaCatalogClient.GetMediaPosterUri(item.Id);
+            if (item.Value is null || item.Type is null)
+            {
+                continue;
+            }
+
             searchResults.Add(new MediaSearchResult(item.Id, item.Value, item.Type, thumbnail));
         }
 

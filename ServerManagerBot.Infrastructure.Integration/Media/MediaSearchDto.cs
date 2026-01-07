@@ -10,8 +10,8 @@ public class MediaSearchDto
     public int Id { get; set; }
     
     [JsonPropertyName("value")]
-    public string Value { get; set; }
+    public string? Value { get; set; }
     
     [JsonPropertyName("type")]
-    public string Type { get; set; }
+    public string? Type { get; set; }
 }
