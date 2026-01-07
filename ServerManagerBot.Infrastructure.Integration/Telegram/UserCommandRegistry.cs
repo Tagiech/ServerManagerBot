@@ -22,10 +22,15 @@ public class UserCommandRegistry : IUserCommandRegistry
         }
     }
 
-    public CommandDescriptor? Resolve(string commandName)
+    public CommandDescriptor? Resolve(string commandName, CommandSource commandSource)
     {
         _commands.TryGetValue(commandName, out var descriptor);
-        return descriptor;
+        if (descriptor is not null)
+        {
+            return (descriptor.Sources & commandSource) != 0 ? descriptor : null;
+        }
+
+        return null;
     }
 
     public IReadOnlyCollection<CommandDescriptor> GetAll()

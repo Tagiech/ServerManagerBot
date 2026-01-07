@@ -6,4 +6,5 @@ namespace ServerManagerBot.Host.Config;
 public class TelegramConfig
 {
     public string? ApiKey { get; init; }
+    public long[]? AllowedUserIds { get; init; }
 }

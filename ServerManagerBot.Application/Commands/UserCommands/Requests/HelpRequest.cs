@@ -6,14 +6,23 @@ using ServerManagerBot.Domain.Interfaces.Mediator;
 namespace ServerManagerBot.Application.Commands.UserCommands.Requests;
 
 [UsedImplicitly]
-[UserCommand("help", "Show this message", "помощь", "хелп")]
-public class HelpRequest : IParsableRequest<HelpRequest, UserResponse>
+[UserCommand("help",
+    CommandSource.Text | CommandSource.InlineQuery | CommandSource.Callback,
+    "Show this message", "помощь", "хелп")]
+public class HelpRequest : IParsableRequest<HelpRequest, CommandResponse>
 {
-    public static HelpRequest Parse(CommandContext context) => new();
+    public string SourceId { get; }
+
+    public HelpRequest(string sourceId)
+    {
+        SourceId = sourceId;
+    }
+
+    public static HelpRequest Parse(CommandContext context) => new(context.SourceId);
 }
 
 [UsedImplicitly]
-public sealed class HelpRequestHandler : IRequestHandler<HelpRequest, UserResponse>
+public sealed class HelpRequestHandler : IRequestHandler<HelpRequest, CommandResponse>
 {
     private readonly IUserCommandRegistry _commandRegistry;
 
@@ -22,7 +31,7 @@ public sealed class HelpRequestHandler : IRequestHandler<HelpRequest, UserRespon
         _commandRegistry = commandRegistry;
     }
 
-    public Task<UserResponse> Handle(HelpRequest request, CancellationToken ct)
+    public Task<CommandResponse> Handle(HelpRequest request, CancellationToken ct)
     {
         var commands = _commandRegistry.GetAll();
 
@@ -32,6 +41,6 @@ public sealed class HelpRequestHandler : IRequestHandler<HelpRequest, UserRespon
                               commands.Select(cmd =>
                                   $"/{cmd.Name} - {cmd.Description}"));
 
-        return Task.FromResult<UserResponse>(new TextResponse(helpMessage));
+        return Task.FromResult(new CommandResponse(request.SourceId).WithText(helpMessage));
     }
 }

@@ -26,6 +26,7 @@ public class UserCommandDiscoverer
                 result.Add(new CommandDescriptor(attribute.Name,
                     attribute.Description,
                     attribute.Aliases,
+                    attribute.Sources,
                     type));
             }
         }

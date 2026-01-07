@@ -5,7 +5,7 @@ namespace ServerManagerBot.Application.Commands;
 
 public interface IParsableRequest<out TRequest, TResponse> : IRequest<TResponse>
     where TRequest : IParsableRequest<TRequest, TResponse>
-    where TResponse : UserResponse
+    where TResponse : CommandResponse
 {
     static abstract TRequest Parse(CommandContext context);
 }
