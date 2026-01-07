@@ -6,24 +6,26 @@ using ServerManagerBot.Domain.Interfaces.Mediator;
 namespace ServerManagerBot.Application.Commands.UserCommands.Requests;
 
 [UsedImplicitly]
-[UserCommand("echo", "Echo back the provided message", "эхо")]
-public class EchoRequest : IParsableRequest<EchoRequest, UserResponse>
+[UserCommand("echo", CommandSource.Text, "Echo back the provided message", "эхо")]
+public class EchoRequest : IParsableRequest<EchoRequest, CommandResponse>
 {
+    public string SourceId { get; }
     public string Message { get; }
-    
-    public EchoRequest(string message)
+
+    public EchoRequest(string sourceId, string message)
     {
+        SourceId = sourceId;
         Message = message;
     }
 
-    public static EchoRequest Parse(CommandContext context) => new(context.Query);
+    public static EchoRequest Parse(CommandContext context) => new(context.SourceId, context.Query);
 }
 
 [UsedImplicitly]
-public class EchoRequestHandler : IRequestHandler<EchoRequest, UserResponse>
+public class EchoRequestHandler : IRequestHandler<EchoRequest, CommandResponse>
 {
-    public Task<UserResponse> Handle(EchoRequest request, CancellationToken ct)
+    public Task<CommandResponse> Handle(EchoRequest request, CancellationToken ct)
     {
-        return Task.FromResult<UserResponse>(new TextResponse(request.Message));
+        return Task.FromResult(new CommandResponse(request.SourceId).WithText(request.Message));
     }
 }

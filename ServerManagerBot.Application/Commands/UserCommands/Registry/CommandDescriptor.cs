@@ -6,12 +6,18 @@ public class CommandDescriptor
     public string Description { get; }
     public string[]? Aliases { get; }
     public Type CommandType { get; }
+    public CommandSource Sources { get; }
 
-    public CommandDescriptor(string name, string description, string[]? aliases, Type commandType)
+    public CommandDescriptor(string name,
+        string description,
+        string[]? aliases,
+        CommandSource sources,
+        Type commandType)
     {
         Name = name;
         Description = description;
         Aliases = aliases;
+        Sources = sources;
         CommandType = commandType;
     }
 }

@@ -17,9 +17,10 @@ public sealed class UserCommandDispatcher
         _userGateRegistry = userGateRegistry;
     }
 
-    public async Task<UserResponse> DispatchExclusive(CommandDescriptor descriptor, CommandContext context, CancellationToken ct)
+    public async Task<CommandResponse> DispatchExclusive(CommandDescriptor descriptor, CommandContext context,
+        CancellationToken ct)
     {
-        var gate = _userGateRegistry.Get(context.UserId);
+        var gate = _userGateRegistry.Get(context.SourceId);
         await gate.WaitAsync(ct);
         try
         {
@@ -27,7 +28,7 @@ public sealed class UserCommandDispatcher
         }
         catch (Exception ex) //TODO: catch specific exceptions
         {
-            return new TextResponse($"{ex.Message} {ex.StackTrace}");
+            return new CommandResponse(context.SourceId).WithText($"{ex.Message} {ex.StackTrace}");
         }
         finally
         {
@@ -35,7 +36,8 @@ public sealed class UserCommandDispatcher
         }
     }
 
-    private async Task<UserResponse> Dispatch(CommandDescriptor descriptor, CommandContext context, CancellationToken ct)
+    private async Task<CommandResponse> Dispatch(CommandDescriptor descriptor, CommandContext context,
+        CancellationToken ct)
     {
         var commandType = descriptor.CommandType;
 
@@ -46,15 +48,15 @@ public sealed class UserCommandDispatcher
                               $"Command '{commandType.Name}' must define static Parse(CommandContext).");
 
         var request = parseMethod.Invoke(null, [context])!;
-        
+
         var sendMethod = typeof(IMediator)
             .GetMethods()
             .Single(m =>
                 m is { Name: nameof(IMediator.Send), IsGenericMethodDefinition: true } &&
                 m.GetGenericArguments().Length == 2)
-            .MakeGenericMethod(commandType, typeof(UserResponse));
+            .MakeGenericMethod(commandType, typeof(CommandResponse));
 
-        return await (Task<UserResponse>)sendMethod.Invoke(
+        return await (Task<CommandResponse>)sendMethod.Invoke(
             _mediator,
             [request, ct])!;
     }

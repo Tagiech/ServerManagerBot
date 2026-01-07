@@ -6,15 +6,25 @@ using ServerManagerBot.Domain.Interfaces.Mediator;
 namespace ServerManagerBot.Application.Commands.UserCommands.Requests;
 
 [UsedImplicitly]
-[UserCommand("ping", "Check bot availability", "пинг")]
-public class PingRequest : IParsableRequest<PingRequest, UserResponse>
+[UserCommand("ping",
+    CommandSource.Text | CommandSource.InlineQuery | CommandSource.Callback,
+    "Check bot availability",
+    "пинг")]
+public class PingRequest : IParsableRequest<PingRequest, CommandResponse>
 {
-    public static PingRequest Parse(CommandContext context) => new();
+    public string SourceId { get; }
+
+    public PingRequest(string sourceId)
+    {
+        SourceId = sourceId;
+    }
+
+    public static PingRequest Parse(CommandContext context) => new(context.SourceId);
 }
 
 [UsedImplicitly]
-public sealed class PingHandler : IRequestHandler<PingRequest, UserResponse>
+public sealed class PingHandler : IRequestHandler<PingRequest, CommandResponse>
 {
-    public Task<UserResponse> Handle(PingRequest request, CancellationToken ct)
-        => Task.FromResult<UserResponse>(new TextResponse("pong"));
+    public Task<CommandResponse> Handle(PingRequest request, CancellationToken ct)
+        => Task.FromResult(new CommandResponse(request.SourceId).WithText("pong"));
 }
